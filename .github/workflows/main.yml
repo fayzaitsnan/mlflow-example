@@ -1,0 +1,46 @@
+name: CI MLflow
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+env:
+  CSV_URL: "Project/wine-quality.csv"
+  TARGET_VAR: "quality"
+  ALPHA: 0.5
+  L1_RATIO: 0.5
+  RANDOM_STATE: 42
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Menarik kode dari repositori Anda ke Virtual Machine GitHub
+      - uses: actions/checkout@v3
+
+      # 2. Menyiapkan lingkungan Python versi 3.12.7
+      - name: Set up Python 3.12.7
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12.7"
+      
+      # 3. Memeriksa apakah Environment Variables terbaca dengan benar
+      - name: Check Env
+        run: |
+          echo $CSV_URL
+
+      # 4. Memasang dependensi dasar (pip dan mlflow)
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install mlflow
+      
+      # 5. Mengeksekusi proyek MLflow menggunakan data di dalam folder Project
+      - name: Run mlflow project
+        run: |
+          mlflow run Project --env-manager=local
